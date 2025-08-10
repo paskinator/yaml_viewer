@@ -1,0 +1,20 @@
+{
+  "name": "yaml-table-viewer",
+  "displayName": "YAML Table Viewer",
+  "description": "Preview YAML as a table in VS Code.",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.80.0" },
+  "activationEvents": ["onCommand:yamlTableViewer.openPreview"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "yamlTableViewer.openPreview",
+        "title": "Open YAML Table Preview"
+      }
+    ]
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
