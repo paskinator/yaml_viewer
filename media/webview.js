@@ -69,17 +69,16 @@
         const updatedDisplay = table.getData();
         console.log("Saving data from table:", updatedDisplay);
 
-        // Parse JSON strings back into objects/arrays if possible
         const restored = updatedDisplay.map(row => {
           const newRow = {};
           Object.entries(row).forEach(([key, val]) => {
-            // Skip keys with empty string or only whitespace values
-            if (typeof val === "string" && val.trim() === "") {
-              // Don't add this key to newRow
-              return;
-            }
             if (typeof val === "string") {
               const trimmed = val.trim();
+
+              // Skip empty strings
+              if (trimmed === "") return;
+
+              // Try to parse JSON objects or arrays
               if (
                 (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
                 (trimmed.startsWith("[") && trimmed.endsWith("]"))
@@ -87,10 +86,26 @@
                 try {
                   newRow[key] = JSON.parse(trimmed);
                   return;
-                } catch {}
+                } catch {
+                  // fallback to string
+                }
               }
+
+              // Try to convert numeric strings to numbers (only if the whole string is numeric)
+              if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+                newRow[key] = Number(trimmed);
+                return;
+              }
+
+              // Otherwise keep as string
+              newRow[key] = val;
+            } else if (val === "" || val === null || val === undefined) {
+              // skip empty/null/undefined fields
+              return;
+            } else {
+              // keep other types as is (number, boolean, object)
+              newRow[key] = val;
             }
-            newRow[key] = val;
           });
           return newRow;
         });
@@ -102,6 +117,7 @@
         console.error("Save preparation error:", err);
       }
     });
+
 
     window.addEventListener("message", (event) => {
       const msg = event.data;
