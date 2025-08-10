@@ -1,5 +1,30 @@
 body {
-  font-family: sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   margin: 0;
-  padding: 10px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+#toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+#saveBtn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: #f3f3f3;
+  cursor: pointer;
+}
+
+#status {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+#table {
+  height: calc(100vh - 70px);
 }
