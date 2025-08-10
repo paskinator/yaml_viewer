@@ -73,6 +73,11 @@
         const restored = updatedDisplay.map(row => {
           const newRow = {};
           Object.entries(row).forEach(([key, val]) => {
+            // Skip keys with empty string or only whitespace values
+            if (typeof val === "string" && val.trim() === "") {
+              // Don't add this key to newRow
+              return;
+            }
             if (typeof val === "string") {
               const trimmed = val.trim();
               if (
