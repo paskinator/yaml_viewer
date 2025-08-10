@@ -74,37 +74,21 @@
           Object.entries(row).forEach(([key, val]) => {
             if (typeof val === "string") {
               const trimmed = val.trim();
-
-              // Skip empty strings
-              if (trimmed === "") return;
-
-              // Try to parse JSON objects or arrays
-              if (
-                (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
-                (trimmed.startsWith("[") && trimmed.endsWith("]"))
-              ) {
-                try {
-                  newRow[key] = JSON.parse(trimmed);
-                  return;
-                } catch {
-                  // fallback to string
-                }
-              }
-
-              // Try to convert numeric strings to numbers (only if the whole string is numeric)
+              
               if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
                 newRow[key] = Number(trimmed);
                 return;
               }
+              
+              if (trimmed === "") return; // skip empty strings
+              
 
-              // Otherwise keep as string
+              // Do NOT parse JSON — keep string as is, even if looks like JSON
               newRow[key] = val;
             } else if (val === "" || val === null || val === undefined) {
-              // skip empty/null/undefined fields
-              return;
+              return; // skip empty/null/undefined
             } else {
-              // keep other types as is (number, boolean, object)
-              newRow[key] = val;
+              newRow[key] = val; // keep other types as is (numbers, bools)
             }
           });
           return newRow;
