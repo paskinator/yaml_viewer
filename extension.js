@@ -1,4 +1,3 @@
-// extension.js
 const vscode = require("vscode");
 const path = require("path");
 const yaml = require("js-yaml");
@@ -230,6 +229,7 @@ function getWebviewHtml(webview, tableJson) {
   <div id="table"></div>
 
   <script src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
   <script>
     // tableData provided by extension
     const tableData = ${tableJson};

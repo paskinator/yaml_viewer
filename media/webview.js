@@ -19,7 +19,7 @@
         if (val !== null && typeof val === "object") {
           try {
             // Dump object/array to YAML with block style
-            const dumped = yaml.dump(val, { flowLevel: -1 }).trim();
+            const dumped = yaml.dump(val, { flowLevel: 0 }).trim();
             // Store as plain string for editing in table
             newRow[key] = dumped;
           } catch {
