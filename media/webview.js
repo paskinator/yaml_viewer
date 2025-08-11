@@ -9,6 +9,8 @@
     const allKeys = Array.from(new Set(tableData.flatMap(row => Object.keys(row))));
     console.log("Columns detected:", allKeys);
 
+    const yaml = window.jsyaml;
+  
     // Prepare display data, stringify nested objects/lists
     const displayData = tableData.map(row => {
       const newRow = {};
@@ -16,14 +18,17 @@
         const val = row[key];
         if (val !== null && typeof val === "object") {
           try {
-            newRow[key] = JSON.stringify(val);
+            // Dump object/array to YAML with block style
+            const dumped = yaml.dump(val, { flowLevel: -1 }).trim();
+            // Store as plain string for editing in table
+            newRow[key] = dumped;
           } catch {
             newRow[key] = String(val);
           }
-        } else if (val === undefined) {
+        } else if (val === undefined || val === null) {
           newRow[key] = "";
         } else {
-          newRow[key] = val;
+          newRow[key] = String(val); // ensure primitive types are strings
         }
       });
       return newRow;
@@ -74,21 +79,36 @@
           Object.entries(row).forEach(([key, val]) => {
             if (typeof val === "string") {
               const trimmed = val.trim();
-              
+
+              // If value looks like YAML (multi-line or starts with [ or {), parse it
+              if (trimmed.includes("\n") || trimmed.startsWith("[") || trimmed.startsWith("{")) {
+                try {
+                  newRow[key] = yaml.load(trimmed); // parse YAML string into object/array
+                  return;
+                } catch {
+                  newRow[key] = val;
+                  return;
+                }
+              }
+
+              // If numeric string, convert to number
               if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
                 newRow[key] = Number(trimmed);
                 return;
               }
-              
-              if (trimmed === "") return; // skip empty strings
-              
 
-              // Do NOT parse JSON — keep string as is, even if looks like JSON
+              // Skip completely empty strings
+              if (trimmed === "") return;
+
+              // Otherwise keep as raw string
               newRow[key] = val;
+
             } else if (val === "" || val === null || val === undefined) {
               return; // skip empty/null/undefined
+
             } else {
-              newRow[key] = val; // keep other types as is (numbers, bools)
+              // Keep other types (numbers, booleans) as is
+              newRow[key] = val;
             }
           });
           return newRow;
